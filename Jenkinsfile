@@ -12,27 +12,19 @@ pipeline {
       }
     }
     stage('Deploy') {
+      failFast true
       parallel {
         stage('Deploy to dev') {
-          agent {
-            label 'dev'
-          }
           steps {
             sh './deployment/deploy.py dev'
           }
         }
         stage('Deploy to tst') {
-          agent {
-            label 'ts'
-          }
           steps {
             sh './deployment/deploy.py tst'
           }
         }
         stage('Deploy to qa') {
-          agent {
-            label 'qa'
-          }
           steps {
             sh './deployment/deploy.py qa'
           }
