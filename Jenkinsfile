@@ -9,9 +9,39 @@ pipeline {
     stage('Test') {
       steps {
         sh './deployment/test.py'
-        sh './deployment/deploy.py dev'
-        sh './deployment/deploy.py tst'
-        sh './deployment/deploy.py qa'
+      }
+    }
+    stage('Deploy') {
+      parallel {
+        stage('Deploy to dev') {
+          agent {
+            label 'dev'
+          }
+          steps {
+            sh './deployment/deploy.py dev'
+          }
+        }
+        stage('Deploy to tst') {
+          agent {
+            label 'ts'
+          }
+          steps {
+            sh './deployment/deploy.py tst'
+          }
+        }
+        stage('Deploy to qa') {
+          agent {
+            label 'qa'
+          }
+          steps {
+            sh './deployment/deploy.py qa'
+          }
+        }
+      }
+    }
+    stage('UAT') {
+      steps {
+        input 'Deploy to Production (prd)?'
       }
     }
     stage('Release') {
